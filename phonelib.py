@@ -14,6 +14,7 @@ class Phone(threading.Thread):
         self.on_hook = None
         self.button_down = None
         self.last_button = None
+        self.coin = None
         self.first_press = False
 
         self.PINS = [4, 17, 18, 23, 24, 25, 27]
@@ -37,6 +38,7 @@ class Phone(threading.Thread):
         button_row = 2*pins[5] + pins[4]
         button_col = 2*pins[3] + pins[2]
         button = ['123', '456', '789', '*0#'][button_row][button_col]
+        coin = not pins[6]
 
         if on_hook != self.on_hook:
             self.broadcast(lambda s: s.hook(on_hook))
@@ -59,6 +61,14 @@ class Phone(threading.Thread):
             self.broadcast(lambda s: s.buttonDown(button))
         self.button_down = button_down
         self.last_button = button
+
+        # unlike other inputs, coin does not latch; if poll_interval is
+        # too big we might miss it
+        if coin != self.coin:
+            if coin:
+                # only quarters right now
+                self.broadcast(lambda s: s.money(.25))
+        self.coin = coin
 
     def poll_pins(self):
         return [GPIO.input(pin) for pin in self.PINS]
@@ -89,6 +99,9 @@ class PhoneListener(object):
 
     def buttonUp(self, n):
         print 'button released:', n
+
+    def money(self, amt):
+        print 'money:', amt
 
 if __name__ == "__main__":
 
