@@ -8,7 +8,7 @@ class Phone(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.up = True
-        self.poll_interval = 0.01
+        self.poll_interval = .01
         self.subscribers = []
 
         self.on_hook = None
@@ -22,6 +22,7 @@ class Phone(threading.Thread):
         GPIO.setmode(GPIO.BCM)
         for p in self.PINS:
             GPIO.setup(p, GPIO.IN)
+        GPIO.add_event_detect(27, GPIO.FALLING)
 
     def terminate(self):
         self.up = False
@@ -30,6 +31,7 @@ class Phone(threading.Thread):
         while self.up:
             self.update()
             time.sleep(self.poll_interval)
+        GPIO.cleanup()
 
     def update(self):
         pins = self.poll_pins()
@@ -67,8 +69,6 @@ class Phone(threading.Thread):
         self.button_down = button_down
         self.last_button = button
 
-        # unlike other inputs, coin does not latch; if poll_interval is
-        # too big we might miss it
         if coin != self.coin:
             if coin:
                 # only quarters right now
@@ -76,7 +76,11 @@ class Phone(threading.Thread):
         self.coin = coin
 
     def poll_pins(self):
-        return [GPIO.input(pin) for pin in self.PINS]
+        pins = [GPIO.input(pin) for pin in self.PINS]
+        # coin event is very short so we use the monitoring capability of the GPIO lib
+        if GPIO.event_detected(27):
+            pins[6] = 0
+        return pins
 
     def cur_state(self):
         return {
