@@ -38,6 +38,11 @@ class Phone(threading.Thread):
         button_row = 2*pins[5] + pins[4]
         button_col = 2*pins[3] + pins[2]
         button = ['123', '456', '789', '*0#'][button_row][button_col]
+        # for reference, coin mech wiring:
+        # G = common
+        # W = quarter
+        # R = dime
+        # B = nickel
         coin = not pins[6]
 
         if on_hook != self.on_hook:
