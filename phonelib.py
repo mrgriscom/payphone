@@ -3,6 +3,7 @@
 import RPi.GPIO as GPIO
 import time
 import threading
+import pygame
 
 class Phone(threading.Thread):
     def __init__(self):
@@ -99,7 +100,48 @@ class Phone(threading.Thread):
     def unsubscribe(self, s):
         self.subscribers.remove(s)
 
-class PhoneListener(object):
+class PhoneEventHandler(object):
+    def hook(self, on):
+        pass
+
+    def buttonDown(self, n):
+        pass
+
+    def buttonUp(self, n):
+        pass
+
+    def money(self, amt):
+        pass
+
+class DTMFEcho(PhoneEventHandler):
+    def __init__(self, evenOnHook=False):
+        pygame.mixer.init(channels=1, buffer=512)
+        self.sounds = dict((c, pygame.mixer.Sound('/home/pi/payphone/DTMF-%s.wav' % c)) for c in '0123456789spabcd')
+
+        self.evenOnHook = evenOnHook
+        self.onHook = None
+
+    def hook(self, on):
+        self.onHook = on
+
+    def buttonDown(self, n):
+        if not self.onHook or self.evenOnHook:
+            self.play(n)
+
+    def buttonUp(self, n):
+        self.stop()
+
+    def play(self, n):
+        n = {
+            '*': 's',
+            '#': 'p',
+        }.get(n, n)
+        self.sounds[n].play(loops=-1)
+
+    def stop(self):
+        pygame.mixer.stop()
+
+class PhoneListener(PhoneEventHandler):
     def hook(self, on):
         print 'hook:', on
 
@@ -124,4 +166,6 @@ if __name__ == "__main__":
         while True:
             time.sleep(.01)
     except KeyboardInterrupt:
-        ph.terminate()
+        pass
+
+    ph.terminate()
