@@ -2,7 +2,7 @@ from phonelib import *
 from subprocess import Popen, PIPE
 import sys
 
-class TestListener(PhoneEventHandler):
+class SIPClientListener(PhoneEventHandler):
     def __init__(self):
         self.p = Popen('twinkle -c', shell=True, stdin=PIPE)
 
@@ -27,7 +27,7 @@ if __name__ == "__main__":
     ph.start()
     ph.subscribe(DTMFEcho(False))
 
-    listener = TestListener()
+    listener = SIPClientListener()
     ph.subscribe(listener)
 
     try:
