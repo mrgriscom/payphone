@@ -19,6 +19,10 @@ class SIPClientListener(PhoneEventHandler):
     def buttonDown(self, n):
         self.cmd('dtmf %s' % n)
 
+    def money(self, amt):
+        assert amt == .25
+        self.cmd('dtmf -r a')
+
 
 
 if __name__ == "__main__":
