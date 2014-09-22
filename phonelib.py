@@ -40,7 +40,11 @@ class Phone(threading.Thread):
         button_down = bool(pins[1])
         button_row = 2*pins[5] + pins[4]
         button_col = 2*pins[3] + pins[2]
-        button = ['123', '456', '789', '*0#'][button_row][button_col]
+        try:
+            button = ['123', '456', '789', '*0#'][button_row][button_col]
+        except IndexError:
+            # on init the button # might not be valid
+            button = None
         # for reference, coin mech wiring:
         # G = common
         # W = quarter
