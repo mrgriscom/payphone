@@ -2,6 +2,8 @@ from phonelib import *
 from subprocess import Popen, PIPE
 import sys
 
+CALLER_ID_PENDING = '_pending'
+
 class SIPClient(PhoneEventHandler):
     def __init__(self, callout_ext=None):
         self.p = Popen(['twinkle', '-c'], stdin=PIPE, stdout=PIPE)
@@ -46,20 +48,22 @@ class SIPClient(PhoneEventHandler):
         self.incoming_from = caller
 
     def ringer_start(self, type=None):
-        print '**RING RING**'
+        self._ringer = Popen('mpg123 --loop -1 -a hw:1 /home/pi/mp3/nokia.mp3'.split())
+        print 'ringer on'
 
     def ringer_stop(self):
-        print '--silence--'        
+        self._ringer.kill()
+        print 'ringer off'
 
     def on_output(self, ln):
         print '<<', ln
         if ln.startswith('Line 1:'):
             action = ln[len('Line 1:'):].strip()
             if action == 'incoming call':
-                self.incoming_from = '_pending'
-            elif action in ('far end cancelled call', 'answer timeout.'):
+                self.incoming_from = CALLER_ID_PENDING
+            elif action in ('far end cancelled call.', 'answer timeout.'):
                 self.incoming(None)
-        elif ln.startswith('From:') and self.incoming_from == 'pending':
+        elif ln.startswith('From:') and self.incoming_from == CALLER_ID_PENDING:
             caller = ln[len('From:'):].strip()
             self.incoming(caller)
 
