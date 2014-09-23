@@ -10,4 +10,4 @@ def generate(filename, freqs, duration, bits=16, rate=44100, mono=True):
 
 for col, f1 in enumerate(freqs1):
     for row, f2 in enumerate(freqs2):
-        generate('DTMF-%s.wav' % buttons[row][col], [f1, f2], 1., rate=22050)
+        generate('audio/DTMF-%s.wav' % buttons[row][col], [f1, f2], 1., rate=22050)

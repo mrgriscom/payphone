@@ -1,0 +1,45 @@
+Hardware setup:
+
+1) connect piphone speaker to raspberry pi audio out
+2) connect piphone microphone to usb soundcard mic in
+3) connect external speaker to usb soundcard audio out (this will be used as the ringer)
+
+Setup Instructions:
+
+1) install asterisk on raspberry pi
+
+sudo apt-get install asterisk
+
+2) install twinkle softphone client on raspberry pi
+
+sudo apt-get install twinkle
+
+3) configure asterisk
+
+append the contents of each file in asterisk_cfg/ to the relevant config file in /etc/asterisk
+
+4) configure twinkle softphone (requires gui)
+
+create a new user account:
+user name = 6001
+domain = localhost
+password = password from sip.conf
+
+5) disable twinkle built-in ringer
+
+cd /usr/share/twinkle
+mv ringtone.wav _ringtone.wav
+touch ringtone.wav
+
+6) get code
+
+git clone https://github.com/mrgriscom/payphone.git
+
+7) (optional) run asterisk interactively
+
+service asterisk stop
+asterisk -cvvvvv
+
+7) launch phone client
+
+python voipclient.py 123

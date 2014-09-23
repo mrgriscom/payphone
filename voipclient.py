@@ -48,7 +48,7 @@ class SIPClient(PhoneEventHandler):
         self.incoming_from = caller
 
     def ringer_start(self, type=None):
-        self._ringer = Popen('mpg123 --loop -1 -a hw:1 /home/pi/mp3/nokia.mp3'.split())
+        self._ringer = Popen('mpg123 --loop -1 -a hw:1 audio/ring_nokia.mp3'.split())
         print 'ringer on'
 
     def ringer_stop(self):
