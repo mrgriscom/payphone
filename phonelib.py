@@ -120,7 +120,7 @@ class PhoneEventHandler(object):
 class DTMFEcho(PhoneEventHandler):
     def __init__(self, evenOnHook=False):
         pygame.mixer.init(channels=1, buffer=512)
-        self.sounds = dict((c, pygame.mixer.Sound('/home/pi/payphone/DTMF-%s.wav' % c)) for c in '0123456789spabcd')
+        self.sounds = dict((c, pygame.mixer.Sound('/home/pi/payphone/audio/DTMF-%s.wav' % c)) for c in '0123456789spabcd')
 
         self.evenOnHook = evenOnHook
         self.onHook = None
